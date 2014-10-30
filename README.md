@@ -2,19 +2,28 @@
 
 Use [HAProxy][] to create a HTTPS proxy.
 
+## Disclaimer about load balancing
+
+This container uses HAProxy, but **it does not perform load balancing**.
+It's just for adding an HTTPS layer to any HTTP container.
+
+However, feel free to fork or subclass this image to do it, or just use other
+container for load balancing and link it to this one to add HTTPS to it.
+
 ## Usage
 
-Just link it to any container listening on port 80:
+Just link it to any container listening on port 80
+(let's call it LC for Linked Container):
 
-    docker run -d -p 80:80 -p 443:443 --link other-web:www yajo/https-proxy
+    docker run -d -p 80:80 -p 443:443 --link LC:www yajo/https-proxy
 
 Then navigate to `https://localhost` and add security exception.
 
-### When the main container uses other port
+### When the LC exposes other port
 
 The proxy will use `${WWW_PORT_${PORT}_TCP_ADDR}` as origin, so run it as:
 
-    docker run -e PORT=8080 --link other-web:www yajo/https-proxy
+    docker run -e PORT=8080 --link LC:www yajo/https-proxy
 
 ### When you have a real certificate
 
@@ -28,7 +37,25 @@ in a subimage. Your `Dockerfile` will be similar to:
 
 You can also supply them with environment variables:
 
-    docker run -e KEY="$(cat key.pem)" -e CERT="$(cat cert.pem)" --link other-web:www yajo/https-proxy
+    docker run -e KEY="$(cat key.pem)" -e CERT="$(cat cert.pem)" --link LC:www yajo/https-proxy
+
+### Automatic redirection of HTTP
+
+This image will redirect all HTTP traffic to HTTPS, but this is a job that
+**should** be handled by your LC in production to avoid this little overhead.
+
+To help your LC know it is proxied (because it will seem to the LC like
+requests come in HTTP form), all requests will have this additional
+header: `X-Forwarded-Proto: https`.
+
+You can use that to make HTTPS (`https://example.com/other-page`)
+redirections, or just use relative (`../other-page`) or protocol-agnostic
+(`//example.com/other-page`) redirections and it will always work
+anywhere (this is a good practice, BTW).
+
+If you don't want this forced redirection (to maintain both HTTP and HTTPS
+versions of your site), just expose port 80 from your LC and port 443
+from the proxy.
 
 ## Feedback
 
