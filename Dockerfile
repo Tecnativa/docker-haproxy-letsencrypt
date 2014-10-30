@@ -10,3 +10,4 @@ ENV PORT 80
 RUN yum -y install openssl
 
 ADD 50-https.cfg /etc/haproxy/
+ADD prelaunch.sh /usr/local/sbin/
