@@ -22,7 +22,7 @@ if [ ! -f combined.pem ]; then
                  one. Remember to use real ones for production. See README.
 
             openssl req -x509 -sha256 -newkey rsa:2048 -keyout key.pem \
-                    -out cert.pem -days 365
+                    -out cert.pem -days 365 -batch -nodes
         fi
     fi
 
