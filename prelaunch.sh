@@ -5,7 +5,7 @@ export LINKED_SERVER="$(eval "echo \$WWW_PORT_${PORT}_TCP_ADDR")"
 export LINKED_PORT="$(eval "echo \$WWW_PORT_${PORT}_TCP_PORT")"
 
 previous="$(pwd)"
-cd /etc/pki/tls/private/
+cd /etc/ssl/private/
 
 # Check if a combined certificate exists
 if [ ! -f combined.pem ]; then

@@ -27,13 +27,13 @@ The proxy will use `${WWW_PORT_${PORT}_TCP_ADDR}` as origin, so run it as:
 
 ### When you have a real certificate
 
-You can put your `key.pem` and `cert.pem` files under `/etc/pki/tls/private/`
+You can put your `key.pem` and `cert.pem` files under `/etc/ssl/private/`
 in a subimage. Your `Dockerfile` will be similar to:
 
     FROM yajo/https-proxy
     MAINTAINER you@example.com
-    ADD key.pem /etc/pki/tls/private/
-    ADD cert.pem /etc/pki/tls/private/
+    ADD key.pem /etc/ssl/private/
+    ADD cert.pem /etc/ssl/private/
 
 You can also supply them with environment variables:
 
