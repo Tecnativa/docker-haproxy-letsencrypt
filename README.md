@@ -2,6 +2,9 @@
 
 Use [HAProxy][] to create a HTTPS proxy.
 
+To understand settings in configuration files, see `/etc/haproxy/haproxy.cfg`
+and [online manual](https://cbonte.github.io/haproxy-dconv/).
+
 ## Disclaimer about load balancing
 
 This container uses HAProxy, but **it does not perform load balancing**.
