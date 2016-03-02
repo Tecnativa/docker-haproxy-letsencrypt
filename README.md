@@ -2,8 +2,8 @@
 
 Use [HAProxy][] to create a HTTPS proxy.
 
-To understand settings in configuration files, see `/etc/haproxy/haproxy.cfg`
-and [online manual](https://cbonte.github.io/haproxy-dconv/).
+To understand settings in configuration files, see
+[online manual](https://cbonte.github.io/haproxy-dconv/).
 
 ## Disclaimer about load balancing
 
@@ -35,12 +35,21 @@ in a subimage. Your `Dockerfile` will be similar to:
 
     FROM yajo/https-proxy
     MAINTAINER you@example.com
-    ADD key.pem /etc/ssl/private/
-    ADD cert.pem /etc/ssl/private/
+    ADD cert.pem key.pem /etc/ssl/private/
 
 You can also supply them with environment variables:
 
     docker run -e KEY="$(cat key.pem)" -e CERT="$(cat cert.pem)" --link LC:www yajo/https-proxy
+
+### When you want custom error pages
+
+This is preconfigured to use error pages from the examples. Just override the
+corresponding error page found in `/usr/local/etc/haproxy/errors` in your
+subimage:
+
+    FROM yajo/https-proxy
+    MAINTAINER you@example.com
+    ADD 400.http 503.http /usr/local/etc/haproxy/errors/
 
 ### Automatic redirection of HTTP
 
