@@ -1,10 +1,9 @@
 FROM haproxy
 MAINTAINER Jairo Llopis <yajo.sk8@gmail.com>
 
-CMD ["/usr/local/sbin/launch.sh"]
+ENTRYPOINT ["/usr/local/sbin/entrypoint.sh"]
+CMD haproxy -- /usr/local/etc/haproxy/*.cfg
 EXPOSE 80 443
-
-# Proxy port 80 by default, but can be changed
 ENV PORT 80
 
 RUN apt-get update && apt-get -y install openssl && apt-get clean &&\

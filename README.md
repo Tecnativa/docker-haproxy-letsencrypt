@@ -1,5 +1,7 @@
 # HTTPS Proxy
 
+[![](https://images.microbadger.com/badges/image/yajo/https-proxy.svg)](https://microbadger.com/images/yajo/https-proxy)
+
 Use [HAProxy][] to create a HTTPS proxy.
 
 To understand settings in configuration files, see
@@ -24,7 +26,7 @@ Then navigate to `https://localhost` and add security exception.
 
 ### When the LC exposes other port
 
-The proxy will use `${WWW_PORT_${PORT}_TCP_ADDR}` as origin, so run it as:
+The proxy will use `www:$PORT` as origin, so run it as:
 
     docker run -e PORT=8080 --link LC:www yajo/https-proxy
 
