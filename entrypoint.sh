@@ -25,4 +25,4 @@ if [ ! -f combined.pem ]; then
 fi
 
 # Fall back to original entrypoint
-exec "/docker-entrypoint.sh $@"
+exec /docker-entrypoint.sh "$@"
