@@ -71,6 +71,15 @@ If you don't want this forced redirection (to maintain both HTTP and HTTPS
 versions of your site), just expose port 80 from your LC and port 443
 from the proxy.
 
+## Testing
+
+To test what HTTP headers get to the backend, clone the repo and run on it:
+
+    docker-compose up
+
+Then visit http://localhost to get a standard
+[`phpinfo()`](http://php.net/manual/en/function.phpinfo.php).
+
 ## Feedback
 
 Please send any feedback (issues, questions) to the [issue tracker][].
