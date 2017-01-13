@@ -1,8 +1,10 @@
 # HTTPS Proxy
 
-[![](https://images.microbadger.com/badges/image/yajo/https-proxy.svg)](https://microbadger.com/images/yajo/https-proxy)
+[![](https://images.microbadger.com/badges/image/tecnativa/haproxy-letsencrypt.svg)](https://microbadger.com/images/tecnativa/haproxy-letsencrypt "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/tecnativa/haproxy-letsencrypt.svg)](https://microbadger.com/images/tecnativa/haproxy-letsencrypt "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/commit/tecnativa/haproxy-letsencrypt:latest.svg)](https://microbadger.com/images/tecnativa/haproxy-letsencrypt:latest "Get your own commit badge on microbadger.com")
 
-Use [HAProxy][] to create a HTTPS proxy.
+Use [HAProxy][] to create a HTTPS proxy with for [Let's Encrypt][].
 
 To understand settings in configuration files, see
 [online manual](https://cbonte.github.io/haproxy-dconv/).
@@ -15,12 +17,48 @@ It's just for adding an HTTPS layer to any HTTP container.
 However, feel free to fork or subclass this image to do it, or just use other
 container for load balancing and link it to this one to add HTTPS to it.
 
-## Usage
+## Disclaimer about certificates storage
+
+You should store the `/etc/letsencrypt` volume contents somewhere persistent
+and safe. It contains certificates and private keys, and those things **are
+important**.
+
+## How does it work?
+
+It is based on the
+[officially-supported HAProxy Alpine image](https://hub.docker.com/_/haproxy/)
+with a
+[hash-pinned](https://github.com/Tecnativa/docker-haproxy-letsencrypt/blob/master/certbot.txt)
+install of the official ACME client supported by Let's Encrypt and the EFF:
+[Certbot][], so it tries to stick to official recommendations as close as
+possible.
+
+Before booting HAProxy, it uses the provided configuration to get any missing
+certificates from Let's Encrypt directly using
+[Certbot's standalone `http-01`](https://certbot.eff.org/docs/using.html#standalone)
+challenge implementation, directly on port 80.
+
+After that, it combines the certificate chain with the private key to satisfy
+[HAProxy's requirements](http://cbonte.github.io/haproxy-dconv/1.7/configuration.html#5.1-crt)
+and generates a
+[`crt-list`](http://cbonte.github.io/haproxy-dconv/1.7/configuration.html#crt-list)
+file ready for HAProxy's taste.
+
+Finally, it will merge all configuration files under
+`/usr/local/etc/haproxy/conf.d/` in a single one, and boot up the server.
+
+## Skip the boring parts
+
+If you understand the [Docker Compose file][], then all you need to do is to
+open [`docker-compose.yaml`][], follow any instructions labeled with `XXX`, and
+adapt that structure to your project.
+
+## Usage and boring stuff
 
 Just link it to any container listening on port 80
 (let's call it LC for Linked Container):
 
-    docker run -d -p 80:80 -p 443:443 --link LC:www yajo/https-proxy
+    docker run -d -p 80:80 -p 443:443 --link LC:www tecnativa/haproxy-letsencrypt
 
 Then navigate to `https://localhost` and add security exception.
 
@@ -29,19 +67,6 @@ Then navigate to `https://localhost` and add security exception.
 The proxy will use `www:$PORT` as origin, so run it as:
 
     docker run -e PORT=8080 --link LC:www yajo/https-proxy
-
-### When you have a real certificate
-
-You can put your `key.pem` and `cert.pem` files under `/etc/ssl/private/`
-in a subimage. Your `Dockerfile` will be similar to:
-
-    FROM yajo/https-proxy
-    MAINTAINER you@example.com
-    ADD cert.pem key.pem /etc/ssl/private/
-
-You can also supply them with environment variables:
-
-    docker run -e KEY="$(cat key.pem)" -e CERT="$(cat cert.pem)" --link LC:www yajo/https-proxy
 
 ### When you want custom error pages
 
@@ -59,8 +84,9 @@ This image will redirect all HTTP traffic to HTTPS, but this is a job that
 **should** be handled by your LC in production to avoid this little overhead.
 
 To help your LC know it is proxied (because it will seem to the LC like
-requests come in HTTP form), all requests will have this additional
-header: `X-Forwarded-Proto: https`.
+requests come in HTTP form), all requests will have common additional headers
+like `X-Forwarded-Proto: https` and
+[other common ones](https://github.com/Tecnativa/docker-haproxy-letsencrypt/blob/master/conf/60-backend-main.cfg).
 
 You can use that to make HTTPS (`https://example.com/other-page`)
 redirections, or just use relative (`../other-page`) or protocol-agnostic
@@ -71,18 +97,49 @@ If you don't want this forced redirection (to maintain both HTTP and HTTPS
 versions of your site), just expose port 80 from your LC and port 443
 from the proxy.
 
-## Testing
+### Automatic redirection of `www.example.com` to `example.com`
 
-To test what HTTP headers get to the backend, clone the repo and run on it:
+This container reduces redundancy by removing the `www.` prefix to any request.
 
-    docker-compose up
+You can do it the other way around with `-e WWW_PREFIX=FORCE`, or disable it
+with `-e WWW_PREFIX=0`.
 
-Then visit http://localhost to get a standard
-[`phpinfo()`](http://php.net/manual/en/function.phpinfo.php).
+### Configuring [Certbot][]
+
+You can override the template in `/usr/src/cli.ini` with the default options
+that are going to be used. It gets environment variable-expanded in the
+entrypoint. Use any
+[configuration](https://certbot.eff.org/docs/using.html#configuration-file) you
+want.
+
+By default you should use these environment variables to make it work:
+
+#### `STAGING`
+
+Set it to `false` to start using the real Let's Encrypt CA. By default (`true`)
+it uses the
+[staging environment](https://letsencrypt.org/docs/staging-environment/).
+
+#### `EMAIL`
+
+Set your real email to interact with Let's Encrypt.
+
+#### `DOMAINS`
+
+Comma-separated list of domains you are serving with this container (and for
+whom you want certificates).
+
+#### `RSA_KEY_SIZE`
+
+By default it is a bit higher than [Certbot][]'s default: `4096`.
 
 ## Feedback
 
 Please send any feedback (issues, questions) to the [issue tracker][].
 
 [HAProxy]: http://www.haproxy.org/
+[Certbot]: https://certbot.eff.org/docs/using.html#renewing-certificates
+[Docker Compose file]: https://docs.docker.com/compose/compose-file/
+[`docker-comopse.yaml`]: https://github.com/Tecnativa/docker-haproxy-letsencrypt/blob/master/docker-compose.yaml
+[Let's Encrypt]: https://letsencrypt.org/
 [issue tracker]: https://bitbucket.org/yajo/docker-https-proxy/issues
