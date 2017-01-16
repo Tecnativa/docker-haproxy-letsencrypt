@@ -142,4 +142,4 @@ Please send any feedback (issues, questions) to the [issue tracker][].
 [Docker Compose file]: https://docs.docker.com/compose/compose-file/
 [`docker-comopse.yaml`]: https://github.com/Tecnativa/docker-haproxy-letsencrypt/blob/master/docker-compose.yaml
 [Let's Encrypt]: https://letsencrypt.org/
-[issue tracker]: https://bitbucket.org/yajo/docker-https-proxy/issues
+[issue tracker]: https://github.com/Tecnativa/docker-haproxy-letsencrypt/issues
