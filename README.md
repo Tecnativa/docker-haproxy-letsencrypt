@@ -140,6 +140,6 @@ Please send any feedback (issues, questions) to the [issue tracker][].
 [HAProxy]: http://www.haproxy.org/
 [Certbot]: https://certbot.eff.org/docs/using.html#renewing-certificates
 [Docker Compose file]: https://docs.docker.com/compose/compose-file/
-[`docker-comopse.yaml`]: https://github.com/Tecnativa/docker-haproxy-letsencrypt/blob/master/docker-compose.yaml
+[`docker-compose.yaml`]: https://github.com/Tecnativa/docker-haproxy-letsencrypt/blob/master/docker-compose.yaml
 [Let's Encrypt]: https://letsencrypt.org/
 [issue tracker]: https://github.com/Tecnativa/docker-haproxy-letsencrypt/issues
