@@ -2,7 +2,7 @@ FROM haproxy:1.7-alpine
 MAINTAINER Tecnativa <info@tecnativa.com>
 
 ENTRYPOINT ["/prepare-entrypoint.sh"]
-CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
+CMD haproxy -- /etc/haproxy/*.cfg
 EXPOSE 80 443
 
 # The port listening in `www` container
@@ -51,7 +51,7 @@ RUN ln -s /usr/local/bin/renew.sh /etc/periodic/monthly/renew
 # Utils
 RUN apk add --no-cache gettext socat
 RUN mkdir -p /var/lib/haproxy && touch /var/lib/haproxy/server-state
-COPY conf/* /usr/local/etc/haproxy/conf.d/
+COPY conf/* /etc/haproxy/
 COPY prepare-entrypoint.sh /
 COPY bin/* /usr/local/bin/
 

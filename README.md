@@ -44,8 +44,8 @@ and generates a
 [`crt-list`](http://cbonte.github.io/haproxy-dconv/1.7/configuration.html#crt-list)
 file ready for HAProxy's taste.
 
-Finally, it will merge all configuration files under
-`/usr/local/etc/haproxy/conf.d/` in a single one, and boot up the server.
+Finally, it will boot up the server using with configuration from
+`/etc/haproxy/*.cfg`.
 
 ## Skip the boring parts
 
