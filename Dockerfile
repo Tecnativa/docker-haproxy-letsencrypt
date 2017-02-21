@@ -7,6 +7,9 @@ EXPOSE 80 443
 
 # The port listening in `www` container
 ENV PORT=80 \
+    MODE=NORMAL \
+    # Odoo mode special variables
+    ODOO_LONGPOLLING_PORT=8072 \
     # Use `FORCE` or `REMOVE`
     WWW_PREFIX=REMOVE \
     # Use `false` to ask for real certs

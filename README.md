@@ -104,6 +104,25 @@ This container reduces redundancy by removing the `www.` prefix to any request.
 You can do it the other way around with `-e WWW_PREFIX=FORCE`, or disable it
 with `-e WWW_PREFIX=0`.
 
+### Special modes
+
+You can use the `MODE` environment variable to switch to some special modes by
+setting it to any of these values:
+
+#### `NORMAL` (default)
+
+It simply adds its magic to redirect all HTTP(S) requests to the backend, as
+explained above.
+
+#### `ODOO`
+
+It redirects all requests for `/longpolling` and its subdirs to
+`www:$ODOO_LONGPOLLING_PORT` (`www:8072` by default).
+
+Normally you combine this mode with `e PORT=8069`, and you must configure
+correctly the workers parameter for the Odoo linked container. Check its docs
+for that.
+
 ### Configuring [Certbot][]
 
 You can override the template in `/usr/src/cli.ini` with the default options
