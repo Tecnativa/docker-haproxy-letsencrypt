@@ -148,9 +148,18 @@ Set your real email to interact with Let's Encrypt.
 Comma-separated list of domains you are serving with this container (and for
 whom you want certificates).
 
+Remember that if you are going to serve both `www.example.com` and
+`example.com`, you have to ask for both.
+
 #### `RSA_KEY_SIZE`
 
 By default it is a bit higher than [Certbot][]'s default: `4096`.
+
+### Using replacement hooks
+
+Some configuration files have hooks, such as `# AFTER WWW HOOK`. Those strings
+can be used as a replacement target in your subimage `Dockerfile` with `sed -i`
+to inject some extra rules in those places.
 
 ## Feedback
 
