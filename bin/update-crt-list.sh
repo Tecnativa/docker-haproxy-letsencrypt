@@ -20,8 +20,7 @@ for domain in "$(ls)"; do
             echo "$current" > combined.pem
             changed=yes
         fi
-        # SEE http://marc.info/?l=haproxy&m=143986084312117&w=2
-        list="$list$(pwd)/combined.pem $domain\n"
+        list="$list$(pwd)/combined.pem\n"
     fi
     cd ..
 done
