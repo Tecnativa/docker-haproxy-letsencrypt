@@ -91,7 +91,7 @@ like `X-Forwarded-Proto: https` and
 You can use that to make HTTPS (`https://example.com/other-page`)
 redirections, or just use relative (`../other-page`) or protocol-agnostic
 (`//example.com/other-page`) redirections and it will always work
-anywhere (this is a good practice, BTW).
+anywhere (this should generally be avoided in any https only environment, so everywhere, it's 2019).
 
 If you don't want this forced redirection (to maintain both HTTP and HTTPS
 versions of your site), just expose port 80 from your LC and port 443
